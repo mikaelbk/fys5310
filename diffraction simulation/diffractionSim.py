@@ -5,41 +5,34 @@ from numpy import *
 def get_data(txtfile):
 	with open(txtfile,"r") as infile:
 		lines = infile.readlines()
-		data = zeros([len(lines),len(lines[0])])
-		for i in range(len(data)):
-			data[i][::] = lines[i].split()
-
-		"""data = {}
-		identifiers = infile.readline().split()
-		for identifier in identifiers:
-			data[identifier] = []
-
-		lines = infile.readlines()
-		for line in lines: 
-			values = line.split()
-			for identifier,value in zip(identifiers,values):
-				data[identifier].append(float(value))
-		for identifier in identifiers:
-			data[identifier] = array(data[identifier])
-		"""
-	return data
-
-def dotProd(u,v):
-	prod = 0
-	for i in range(len(u)):
-		prod = prod + u[i] * v[i]
-	return prod
+		#filling array
+		matrix = zeros([len(lines),4])
+		for i in range(len(lines)):
+			for j in range(4):
+				matrix[i][j] = float(lines[i].split()[j])
+	return matrix
 
 def intens(atoms,dk): #atoms is a nested list with form [[Z],[x],[y],[z]]
 	I = 0
 	for i in range(len(atoms)):
 		#print("looping %.i times" % (len(atoms)))
 		Z = atoms[i][0]
-		I = I + Z*e**(-2*pi*1j*dotProd(dk,atoms[i][1:]))
-		I = (abs(I))**2
+		I = I + Z*e**(-2*pi*1j*dot(dk,atoms[i][1:]))
+	I = (abs(I))**2
 	return I
-lattice = array([ [2,1,1,1] ])
-x = intens(lattice,[1,1,1])
 
-y = get_data("fcc")
-print(y)
+atoms = get_data("fcc")
+n = 200
+ri = 0
+rf = 10
+grid = linspace(ri,rf,n)
+#xx, yy = meshgrid(linspace(0,0.9,n),linspace(0,0.9,n))
+kLattice = zeros([n,n])
+for i in range(n):
+	for j in range(n):
+		kLattice[i][j] = intens(atoms,[grid[i],grid[j],0.5])
+
+#plotting
+imshow(kLattice,interpolation="nearest",extent=[ri,rf,ri,rf])
+colorbar()
+show()

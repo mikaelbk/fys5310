@@ -30,7 +30,7 @@ grid = linspace(ri,rf,n)
 kLattice = zeros([n,n])
 for i in range(n):
 	for j in range(n):
-		kLattice[i][j] = intens(atoms,[grid[i],grid[j],0.5])
+		kLattice[i][j] = intens(atoms,[grid[i],grid[j],0])
 
 #plotting
 imshow(kLattice,interpolation="nearest",extent=[ri,rf,ri,rf])
